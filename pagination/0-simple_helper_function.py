@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from typing import Tuple
 
-def index_range(page, page_size):
+def index_range(page: int, page_size: int) -> tuple:
   """
   Return a tuble of start and end indexes for a given page and page size.
   """
