@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+"""
+Simple helper function
+"""
 from typing import Tuple
-"""
-Return tuple with start and end index
-"""
+
+
 def index_range(page: int, page_size: int) -> Tuple[int, int]:
     """
     return a tuple of size two containing a start index and an end index
