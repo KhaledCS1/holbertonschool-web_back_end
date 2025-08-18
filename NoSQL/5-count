@@ -1,0 +1,2 @@
+// Count the number of documents in the school collection and print the result in JSON format
+printjson(db.school.count())

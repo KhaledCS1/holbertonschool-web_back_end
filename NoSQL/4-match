@@ -1,0 +1,2 @@
+// Find documents in the school collection where name equals "Holberton school" and print them in JSON format
+db.school.find({name: "Holberton school"}).forEach(printjson)
