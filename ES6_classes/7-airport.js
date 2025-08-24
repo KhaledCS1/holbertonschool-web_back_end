@@ -1,0 +1,14 @@
+// Airport class with custom string representation
+class Airport {
+  constructor(name, code) {
+    this._name = name;
+    this._code = code;
+  }
+
+  // Custom toString behavior - returns airport code
+  get [Symbol.toStringTag]() {
+    return this._code;
+  }
+}
+
+export default Airport;
