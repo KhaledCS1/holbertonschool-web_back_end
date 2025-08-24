@@ -1,29 +1,39 @@
-// Import Currency from previous file (should be here)
 // Pricing class with amount and currency
-class Currency {
-  constructor(code, name) {
-    this.code = code;
-    this.name = name;
+import Currency from './3-currency';
+
+class Pricing {
+  constructor(amount, currency) {
+    this.amount = amount;
+    this.currency = currency;
   }
 
-  // Code getter/setter
-  get code() { return this._code; }
-  set code(v) {
-    if (typeof v === 'string') this._code = v;
-    else throw new TypeError('Code must be a string');
+  // Amount getter/setter with number validation
+  get amount() {
+    return this._amount;
   }
 
-  // Name getter/setter
-  get name() { return this._name; }
-  set name(v) {
-    if (typeof v === 'string') this._name = v;
-    else throw new TypeError('Name must be a string');
+  set amount(amount) {
+    if (typeof amount === 'number') this._amount = amount;
   }
 
-  // Display full currency format
-  displayFullCurrency() {
-    return `${this.name} (${this.code})`;
+  // Currency getter/setter with Currency instance validation
+  get currency() {
+    return this._currency;
+  }
+
+  set currency(currency) {
+    if (currency instanceof Currency) this._currency = currency;
+  }
+
+  // Display full price format
+  displayFullPrice() {
+    return `${this.amount} ${this.currency.name} (${this.currency.code})`;
+  }
+
+  // Static method for currency conversion
+  static convertPrice(amount, conversionRate) {
+    return amount * conversionRate;
   }
 }
 
-export default Currency;
+export default Pricing;
