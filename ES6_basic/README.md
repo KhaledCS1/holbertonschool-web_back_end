@@ -88,5 +88,3 @@ This project helps you transition from ES5 to ES6 JavaScript by:
 ---
 
 **Author:** Khaled  
-**Language:** JavaScript (ES6)  
-**Environment:** Node.js
