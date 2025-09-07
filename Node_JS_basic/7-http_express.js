@@ -18,18 +18,20 @@ function countStudents(path) {
       const lines = rows.slice(1);
       const fields = {};
       const students = {};
+      let validStudentCount = 0;
 
       for (const line of lines) {
         const cols = line.split(',');
         const field = cols[idxFd];
         const firstname = cols[idxFn];
         if (!field || !firstname) continue;
+        validStudentCount += 1;
         fields[field] = (fields[field] || 0) + 1;
         students[field] = students[field] ? `${students[field]}, ${firstname}` : firstname;
       }
 
       const all = {
-        numberStudents: `Number of students: ${lines.length}\n`,
+        numberStudents: `Number of students: ${validStudentCount}\n`,
         listStudents: [],
       };
       for (const key in fields) {
