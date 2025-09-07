@@ -1,5 +1,5 @@
-// Update all documents in the school collection where name is "Holberton school" and add address field
-db.school.updateMany(
-    { name: "Holberton school" },
-    { $set: {address: "972 Mission street" } }
-)
+// update a document with name equals to name = Holberton school and add the new attr address
+db.school.update(
+	{name:"Holberton school"},
+	{$set: {address: "972 Mission street"}},
+	{ multi: true })
