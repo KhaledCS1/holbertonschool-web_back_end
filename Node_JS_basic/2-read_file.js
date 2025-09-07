@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const fs = require('fs');
 
 module.exports = function countStudents(path) {
@@ -35,7 +36,7 @@ module.exports = function countStudents(path) {
         console.log(`Number of students in ${key}: ${count}. List: ${students[key]}`);
       }
     }
-  } catch (error) {
+  } catch {
     throw new Error('Cannot load the database');
   }
 };
