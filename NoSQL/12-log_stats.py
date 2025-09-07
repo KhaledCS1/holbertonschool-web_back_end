@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
-
+"""Log stats"""
 from pymongo import MongoClient
 
-if __name__ == "__main__":
-    client = MongoClient('mongodb://127.0.0.1:27017')
-    nginx_collection = client.logs.nginx
-    number = nginx_collection.count()
-    number_get = nginx_collection.find({"method": "GET"}).count()
-    number_post = nginx_collection.find({"method": "POST"}).count()
-    number_put = nginx_collection.find({"method": "PUT"}).count()
-    number_patch = nginx_collection.find({"method": "PATCH"}).count()
-    number_delete = nginx_collection.find({"method": "DELETE"}).count()
-    number_status = nginx_collection.find(
-        {"method": "GET", "path": "/status"}).count()
 
-    print("{} logs".format(number))
+def helper(a: dict) -> int:
+    """return log"""
+    client = MongoClient('mongodb://127.0.0.1:27017')
+    logs = client.logs.nginx
+    return logs.count_documents(a)
+
+
+def main():
+    """ provides some stats about Nginx logs stored in MongoDB """
+    print(f"{helper({})} logs")
     print("Methods:")
-    print("\tmethod GET: {}".format(number_get))
-    print("\tmethod POST: {}".format(number_post))
-    print("\tmethod PUT: {}".format(number_put))
-    print("\tmethod PATCH: {}".format(number_patch))
-    print("\tmethod DELETE: {}".format(number_delete))
-    print("{} status check".format(number_status))
+    print(f"\tmethod GET: {helper({'method': 'GET'})}")
+    print(f"\tmethod POST: {helper({'method': 'POST'})}")
+    print(f"\tmethod PUT: {helper({'method': 'PUT'})}")
+    print(f"\tmethod PATCH: {helper({'method': 'PATCH'})}")
+    print(f"\tmethod DELETE: {helper({'method': 'DELETE'})}")
+    print(f"{helper({'method': 'GET', 'path': '/status'})} status check")
+
+
+if __name__ == "__main__":
+    main()
