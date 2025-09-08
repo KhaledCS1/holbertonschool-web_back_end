@@ -3,9 +3,11 @@ const fs = require('fs');
 module.exports = function countStudents(path) {
   return new Promise((resolve, reject) => {
     fs.readFile(path, { encoding: 'utf-8' }, (err, data) => {
-      if (err) return reject(Error('Cannot load the database'));
+      if (err) {
+        return reject(Error('Cannot load the database'));
+      }
 
-      const rows = data.split('\n').filter((l) => l.trim() !== '');
+      const rows = data.split('\n').filter((line) => line.trim() !== '');
       if (rows.length === 0) {
         console.log('Number of students: 0');
         return resolve();
@@ -22,22 +24,28 @@ module.exports = function countStudents(path) {
 
       for (const line of lines) {
         const cols = line.split(',');
-        const field = cols[idxFd];
         const firstname = cols[idxFn];
-        if (!field || !firstname) continue;
+        const field = cols[idxFd];
+
+        if (!firstname || !field) continue;
+
         validStudentCount += 1;
         fields[field] = (fields[field] || 0) + 1;
-        students[field] = students[field] ? `${students[field]}, ${firstname}` : firstname;
+        students[field] = students[field]
+          ? `${students[field]}, ${firstname}`
+          : firstname;
       }
 
       console.log(`Number of students: ${validStudentCount}`);
-      for (const key in fields) {
-        if (Object.prototype.hasOwnProperty.call(fields, key)) {
-          const count = fields[key];
-          console.log(`Number of students in ${key}: ${count}. List: ${students[key]}`);
+      for (const field in fields) {
+        if (Object.prototype.hasOwnProperty.call(fields, field)) {
+          console.log(
+            `Number of students in ${field}: ${fields[field]}. List: ${students[field]}`
+          );
         }
       }
-      return resolve();
+
+      resolve();
     });
   });
 };
