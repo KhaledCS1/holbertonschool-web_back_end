@@ -1,13 +1,39 @@
 #!/usr/bin/env python3
 """Log stats from Nginx collection in MongoDB.
 
-This script connects to a local MongoDB instance (127.0.0.1:27017), reads the
-`logs.nginx` collection, and prints:
-- the total number of log documents,
-- the count per HTTP method (GET, POST, PUT, PATCH, DELETE), and
-- the number of GET requests to the "/status" path.
+Summary:
+    Connects to a local MongoDB instance (127.0.0.1:27017), reads the
+    ``logs.nginx`` collection, and prints:
 
-It is intended to be run after restoring the provided dataset with mongorestore.
+    - Total number of log documents
+    - Count per HTTP method (GET, POST, PUT, PATCH, DELETE)
+    - Number of GET requests to the "/status" path
+
+Usage:
+    Restore the dataset, then run the script from the project root:
+
+        $ mongorestore dump
+        $ ./NoSQL/12-log_stats.py
+
+Expected Output Format:
+    The output strictly matches the following structure (numbers will vary
+    depending on dataset contents):
+
+        <TOTAL> logs
+        Methods:
+            method GET: <COUNT>
+            method POST: <COUNT>
+            method PUT: <COUNT>
+            method PATCH: <COUNT>
+            method DELETE: <COUNT>
+        <STATUS_COUNT> status check
+
+Notes:
+    - Requires a running MongoDB server on ``127.0.0.1:27017``.
+    - The dataset used for validation can be obtained from the project
+      resources and restored using ``mongorestore``.
+    - This module contains no public API; it is intended to be executed as a
+      script from the command line.
 """
 from pymongo import MongoClient
 
