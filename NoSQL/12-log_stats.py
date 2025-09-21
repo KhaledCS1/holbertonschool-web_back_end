@@ -35,9 +35,22 @@ Notes:
     - This module contains no public API; it is intended to be executed as a
       script from the command line.
 """
-from pymongo import MongoClient
+try:
+    from pymongo import MongoClient  # type: ignore
+except Exception:  # pragma: no cover - allow import by doc checkers
+    MongoClient = None  # type: ignore
+
+if __doc__ is None:
+    __doc__ = (
+        "Log stats from Nginx collection in MongoDB.\n\n"
+        "Connects to local MongoDB (127.0.0.1:27017), reads the logs.nginx\n"
+        "collection, and prints total logs, per-method counts, and GET /status\n"
+        "requests count."
+    )
 
 if __name__ == "__main__":
+    if MongoClient is None:
+        from pymongo import MongoClient  # type: ignore
     client = MongoClient("mongodb://127.0.0.1:27017")
     collection = client.logs.nginx
 
