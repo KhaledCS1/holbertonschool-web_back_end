@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""
-Deletion-Resilient Hypermedia Pagination Module
-Implements pagination that remains consistent even when items are deleted
+"""Deletion-resilient hypermedia pagination.
+
+Implements a pagination strategy that remains consistent even if items are
+deleted between requests by using an indexed dataset and calculating the next
+index based on existing keys.
 """
 
 import csv
@@ -10,10 +12,7 @@ from typing import List, Dict
 
 
 class Server:
-    """Server class to paginate a database of popular baby names.
-    Provides deletion-resilient pagination that maintains consistency
-    even when items are removed from the dataset.
-    """
+    """Paginate the Popular Baby Names dataset with deletion resilience."""
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
@@ -21,33 +20,16 @@ class Server:
         self.__indexed_dataset = None
 
     def dataset(self) -> List[List]:
-        """
-        Cached dataset loader.
-        
-        Loads and caches the CSV data, excluding the header row.
-        
-        Returns:
-            List[List]: The dataset without headers.
-        """
+        """Return the cached dataset (rows without the header)."""
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
             self.__dataset = dataset[1:]
-
         return self.__dataset
 
     def indexed_dataset(self) -> Dict[int, List]:
-        """
-        Dataset indexed by sorting position, starting at 0.
-        
-        Creates an indexed version of the dataset where each item
-        is mapped to its original position. This allows for
-        deletion-resilient pagination.
-        
-        Returns:
-            Dict[int, List]: Dataset indexed by original position.
-        """
+        """Return a dict mapping row indices to dataset rows (0-based)."""
         if self.__indexed_dataset is None:
             dataset = self.dataset()
             self.__indexed_dataset = {
@@ -56,46 +38,34 @@ class Server:
         return self.__indexed_dataset
 
     def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+        """Return a page and metadata resilient to deletions.
+
+        Returns a mapping with the following keys:
+            - ``index``: the starting index used for this page
+            - ``next_index``: the index to use for the subsequent page request
+            - ``page_size``: the number of items in the current page
+            - ``data``: the list of rows for the current page
+
+        The implementation skips missing indices (deleted rows) to ensure no
+        data is missed and ``next_index`` advances past the last returned row.
         """
-        Return deletion-resilient pagination data.
-        
-        Uses index-based pagination instead of page numbers to maintain
-        consistency when items are deleted from the dataset. Skips over
-        deleted items automatically.
+        assert isinstance(index, int) and index >= 0
+        indexed_data = self.indexed_dataset()
+        assert index < len(self.dataset())
 
-        Args:
-            index (int, optional): Starting index for pagination. 
-                                 Defaults to None.
-            page_size (int, optional): Number of items per page. 
-                                     Defaults to 10.
+        data = []
+        current_index = index
+        keys = sorted(indexed_data.keys())
 
-        Returns:
-            Dict: Dictionary containing:
-                - index: Current starting index
-                - data: List of data items for current page
-                - page_size: Actual number of items returned
-                - next_index: Index to start next page
-                
-        Raises:
-            AssertionError: If index is out of valid range.
-        """
-        dataset_length = len(self.dataset())
-        assert index is not None and 0 <= index < dataset_length
+    # Collect items until the requested page size is reached
+        while len(data) < page_size and current_index <= keys[-1]:
+            if current_index in indexed_data:
+                data.append(indexed_data[current_index])
+            current_index += 1
 
-        indexed_dataset = self.indexed_dataset()
-        indexed_pages = {}
-        
-        for i in range(index, dataset_length):
-            if i in indexed_dataset and len(indexed_pages) < page_size:
-                indexed_pages[i] = indexed_dataset[i]
-        
-        pages = list(indexed_pages.values())
-        indices = list(indexed_pages.keys())
-        
-        indexed_data = {
-            'index': index,
-            'data': pages,
-            'page_size': len(pages),
-            'next_index': max(indices) + 1 if indices else index + 1
+        return {
+            "index": index,
+            "data": data,
+            "page_size": len(data),
+            "next_index": current_index
         }
-        return indexed_data
