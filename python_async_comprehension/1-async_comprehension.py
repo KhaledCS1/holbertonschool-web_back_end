@@ -1,28 +1,21 @@
 #!/usr/bin/env python3
 """
-Measure the total runtime of executing async_comprehension four times in parallel.
+Collects 10 random numbers from the async_generator using async comprehension.
+
+This coroutine asynchronously iterates over async_generator
+and returns a list containing 10 random float values.
 """
 
-import asyncio
-import time
+from typing import List
 
-# Import async_comprehension from the previous task
-async_comprehension = __import__('1-async_comprehension').async_comprehension
+async_generator = __import__('0-async_generator').async_generator
 
 
-async def measure_runtime() -> float:
+async def async_comprehension() -> List[float]:
     """
-    Executes async_comprehension 4 times concurrently and measures the total runtime.
+    Collects 10 random numbers from async_generator using async comprehension.
 
     Returns:
-        float: The total elapsed time in seconds.
+        List[float]: A list of 10 random float values between 0 and 10.
     """
-    start_time = time.time()
-    await asyncio.gather(
-        async_comprehension(),
-        async_comprehension(),
-        async_comprehension(),
-        async_comprehension(),
-    )
-    end_time = time.time()
-    return end_time - start_time
+    return [value async for value in async_generator()]
