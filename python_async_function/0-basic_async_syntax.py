@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
 """
-Coroutine that yields a random number between 0 and 10, ten times,
-with a 1-second delay between each yield.
+Asynchronous coroutine that waits for a random delay between 0 and max_delay
+seconds, then returns the actual delay.
+
+Args:
+    max_delay (int): Maximum delay in seconds. Defaults to 10.
+
+Returns:
+    float: The actual delay time.
 """
 
 import asyncio
 import random
-from typing import Generator
 
 
-async def async_generator() -> Generator[float, None, None]:
+async def wait_random(max_delay: int = 10) -> float:
     """
-    Yields a random float between 0 and 10 every second, 10 times.
+    Waits for a random delay up to max_delay seconds and returns the delay.
     """
-    for _ in range(10):
-        await asyncio.sleep(1)
-        yield random.uniform(0, 10)
+    delay = random.uniform(0, max_delay)
+    await asyncio.sleep(delay)
+    return delay
+    
